@@ -15,6 +15,9 @@ jobs:
               --template-file template.yml \
               --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
               --region us-east-1
+            # touch inventory
+            # echo "[web]" >> inventory
+            # aws cloudformation describe-stacks --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} --region us-east-1 --query 'Stacks[0].Outputs[?OutputKey==`PublicIP`].OutputValue' --output text > inventory
   # Exercise: Config and Deployment
   configure_infrastructure:
     docker:
@@ -33,9 +36,6 @@ jobs:
           name: Run Playbook and Configure server
           command: |
             # Run the playbook
-            touch inventory
-            echo "[web]" >> inventory
-            aws cloudformation describe-stacks --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} --region us-east-1 --query 'Stacks[0].Outputs[?OutputKey==`PublicIP`].OutputValue' --output text > inventory
             ansible-playbook -i inventory main.yml
 # Sequential workflow
 workflows:
